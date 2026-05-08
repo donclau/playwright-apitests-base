@@ -1,0 +1,70 @@
+[
+  {
+    "name": "POST user OK",
+    "tag": "@smoke @api-user",
+    "method": "POST",
+    "endpoint": "/users",
+    "payload": {
+      "email": "dynamic",
+      "name": "Troncomadera",
+      "surname": "Varishnikova"
+    },
+    "expected": {
+      "status": 201,
+      "maxResponseTime": 2000,
+      "schema": "UserSchema",
+      "validateResponse": true
+    }
+  },
+  {
+    "name": "POST user vacío",
+    "tag": "@smoke @api-user",
+    "method": "POST",
+    "endpoint": "/users",
+    "payload": {},
+    "expected": {
+      "status": 400
+    }
+  },
+  {
+    "name": "POST email inválido",
+    "tag": "@smoke @api-user",
+    "method": "POST",
+    "endpoint": "/users",
+    "payload": {
+      "email": "no-es-email",
+      "name": "test",
+      "surname": "test"
+    },
+    "expected": {
+      "status": 400
+    }
+  },
+  {
+    "name": "POST endpoint inválido",
+    "tag": "@smoke @api-user",  
+    "method": "POST",
+    "endpoint": "/users-invalid",
+    "payload": {
+      "email": "test@test.com"
+    },
+    "expected": {
+      "status": 404
+    }
+  },
+  {
+    "name": "POST performance",
+    "tag": "@smoke @api-user",    
+    "method": "POST",
+    "endpoint": "/users",
+    "payload": {
+      "email": "dynamic",
+      "name": "perf",
+      "surname": "test"
+    },
+    "expected": {
+      "status": 201,
+      "maxResponseTime": 1000
+    }
+  }
+]
