@@ -47,5 +47,6 @@ npx allure open allure-report
 
 
 npx playwright test --grep "@api-user"
+npx playwright test --grep "@test-repo"
 npx playwright test
 allure generate allure-results -o allure-report --clean --single-file

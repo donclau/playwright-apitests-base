@@ -1,0 +1,9 @@
+services:
+ playwright-tests:
+   build: .
+   container_name: playwright_api_tests
+   volumes:
+    - .:/app
+    - /app/node_modules # Evita que los node_modules locales sobreescriban los del contenedor
+   environment:
+    - NODE_ENV=test

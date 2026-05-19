@@ -46,7 +46,7 @@ jobs:
 
 
     - name: Run Playwright Tests (Smoke)
-      run: npx playwright test --grep "@smoke"
+      run: npx playwright test --grep "@test-repo"
       env:
         NODE_ENV: test
 
