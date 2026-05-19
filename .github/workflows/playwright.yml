@@ -1,27 +1,68 @@
+# Pipeline de GitHub Actions para ejecutar pruebas de Playwright con Allure Report
 name: Playwright Tests
+
+
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+ push:
+   branches: [ main, master ]
+ pull_request:
+   branches: [ main, master ]
+ schedule:
+  - cron: '0 8 * * *' # Ejecución programada opcional (Todos los días a las 8:00 UTC)
+ workflow_dispatch: # Permite disparar los tests de forma manual desde GitHub
+
+
 jobs:
-  test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+ test:
+   name: Run Smoke Tests
+   runs-on: ubuntu-latest
+
+
+   steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version: '20' # Versión de Node compatible con Playwright v1.49
+        cache: 'npm'
+
+
+    - name: Install Java (Requerido para Allure Report)
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+
     - name: Install dependencies
       run: npm ci
+
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
+
+
+    - name: Run Playwright Tests (Smoke)
+      run: npx playwright test --grep "@smoke"
+      env:
+        NODE_ENV: test
+
+
+    - name: Generate Allure Report
+      if: always() # Se ejecuta incluso si los tests fallan para ver el reporte de errores
+      run: |
+       npm install -g allure-commandline --save-dev
+       npx allure generate allure-results -o allure-report --clean --single-file
+
+
+    - name: Upload Allure Report Artifact
+      if: always()
+      uses: actions/upload-artifact@v4
       with:
-        name: playwright-report
-        path: playwright-report/
+        name: allure-report
+        path: allure-report/
         retention-days: 30
+
